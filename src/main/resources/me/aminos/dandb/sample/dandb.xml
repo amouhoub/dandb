@@ -14,7 +14,7 @@
 
 	<!-- Getting the results webpage with an HTTP post -->
 
-	<loop item="Category">
+	<loop item="Category" filter="${lastTop.toInt()}-100">
 		<list>
 			<xpath expression="//*[@id='industry']/div">
 				<html-to-xml>
@@ -42,7 +42,7 @@
 
 			<!-- First level categories -->
 
-			<loop item="firstCategory">
+			<loop item="firstCategory" filter="${last1st.toInt()}-100">
 				<list>
 					<var name="firstCategoryRaw" />
 				</list>
@@ -73,10 +73,10 @@
 
 					<!-- Second level categories -->
 
-					<loop item="secondCategory">
+					<loop item="secondCategory" filter="${last2nd.toInt()}-100">
 						<list>
 							<xpath
-								expression="//*[@id='wrapper']//div[preceding-sibling::*[@id='industry']][1]/div[@class='clearfix clistc']//li/a">
+								expression="//*[@id='wrapper']//div[preceding-sibling::*[@id='industry']][1]/div[@class='clearfix clistc']/ul[position() &gt; 2]/li/a">
 								<template>${firstCategorywebpage}</template>
 							</xpath>
 						</list>
@@ -107,7 +107,7 @@
 
 							<!-- Third level categories -->
 
-							<loop item="thirdCategory">
+							<loop item="thirdCategory" filter="${last3rd.toInt()}-100">
 								<list>
 									<xpath
 										expression="//*[@id='wrapper']//div[preceding-sibling::*[@id='industry']][1]/div[@class='clearfix clistc']//li/a">
@@ -135,17 +135,17 @@
 									<!-- Default pageCount value -->
 									<var-def name="pageCount">1</var-def>
 
-									<while condition="${i.toInt() &lt;= pageCount.toInt()}"
+									<while condition="${pageCount.toString().length() &gt; 0 &amp;&amp; i.toInt() &lt;= pageCount.toInt()}"
 										index="i">
 
 										<log>
-											<template>Fetching ${rootUrl}${thirdCategoryUrl}?keyword=&amp;page=${i}</template>
+											<template>Fetching ${rootUrl}${thirdCategoryUrl}?keyword=&amp;page=${(lastPage.toInt()+i.toInt())}</template>
 										</log>
 
 										<!-- Getting the results webpage with an HTTP post -->
 										<var-def name="webpage">
 											<html-to-xml>
-												<http url="${rootUrl}${thirdCategoryUrl}?keyword=&amp;page=${i}"
+												<http url="${rootUrl}${thirdCategoryUrl}?keyword=&amp;page=${(lastPage.toInt()+i.toInt())}"
 													charset="${charset}" method="get" />
 											</html-to-xml>
 										</var-def>
@@ -319,7 +319,7 @@
 
 										<!-- Updating pageCount -->
 										<var-def name="pageCount">
-											<xpath expression="//*[@id='hsrpage']/li[last()-1]//text()">
+											<xpath expression="//*[@id='hsrpage']/li[last()-1]//replace(text(),',','')">
 												<template>${webpage}</template>
 											</xpath>
 										</var-def>

@@ -20,7 +20,12 @@ public class Sample {
 				file.getAbsolutePath());
 		Scraper scraper = new Scraper(config, "/Users/aminos/Desktop/dandb");
 
-		scraper.addVariableToContext("outputPath", "C:/Users/Aminos/Desktop/dandb");
+		scraper.addVariableToContext("outputPath", "/Users/aminos/Desktop/dandb");
+		scraper.addVariableToContext("lastTop", "1");
+		scraper.addVariableToContext("last1st", "1");
+		scraper.addVariableToContext("last2nd", "3");
+		scraper.addVariableToContext("last3rd", "1");
+		scraper.addVariableToContext("lastPage", "1");
 
 		scraper.setDebug(true);
 
