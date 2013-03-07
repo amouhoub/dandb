@@ -1,0 +1,12 @@
+
+.classpath
+
+.project
+
+target/classes/me/aminos/dandb/sample/dandb.xml
+
+*.class
+
+*.jar
+
+target/maven-archiver/pom.properties
