@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+
+	<!-- Global variables -->
+	<var-def name="charset">utf-8</var-def>
+
+	<var-def name="rootUrl">http://www.dandb.com/</var-def>
+
+	<var-def name="CategoryUrl">
+		<template>${rootUrl}businessdirectory/</template>
+	</var-def>
+
+	<!-- Top level categories -->
+
+	<!-- Getting the results webpage with an HTTP post -->
+
+	<loop item="Category">
+		<list>
+			<xpath expression="//*[@id='industry']/div">
+				<html-to-xml>
+					<http url="${CategoryUrl}" charset="${charset}" method="get" />
+				</html-to-xml>
+			</xpath>
+		</list>
+		<body>
+
+			<var-def name="CategoryName">
+				<xpath expression="//div[@class='clearfix bhdc']/h3/text()[1]">
+					<template>${Category}</template>
+				</xpath>
+			</var-def>
+
+			<var-def name="firstCategoryRaw">
+				<xpath expression="//div[@class='clearfix clistc']//li/a">
+					<template>${Category}</template>
+				</xpath>
+			</var-def>
+
+			<log>
+				<template>Top Category ${CategoryName}</template>
+			</log>
+
+			<!-- First level categories -->
+
+			<loop item="firstCategory">
+				<list>
+					<var name="firstCategoryRaw" />
+				</list>
+				<body>
+
+					<var-def name="firstCategoryName">
+						<xpath expression="//text()[1]">
+							<template>${firstCategory}</template>
+						</xpath>
+					</var-def>
+
+					<var-def name="firstCategoryUrl">
+						<xpath expression="//@href">
+							<template>${firstCategory}</template>
+						</xpath>
+					</var-def>
+
+					<log>
+						<template>First Level ${firstCategoryName}</template>
+					</log>
+
+					<!-- Getting the results webpage with an HTTP post -->
+					<var-def name="firstCategorywebpage">
+						<html-to-xml>
+							<http url="${rootUrl}${firstCategoryUrl}" charset="${charset}" />
+						</html-to-xml>
+					</var-def>
+
+					<!-- Second level categories -->
+
+					<loop item="secondCategory">
+						<list>
+							<xpath
+								expression="//*[@id='wrapper']//div[preceding-sibling::*[@id='industry']][1]/div[@class='clearfix clistc']//li/a">
+								<template>${firstCategorywebpage}</template>
+							</xpath>
+						</list>
+						<body>
+
+							<var-def name="secondCategoryName">
+								<xpath expression="//text()[1]">
+									<template>${secondCategory}</template>
+								</xpath>
+							</var-def>
+
+							<var-def name="secondCategoryUrl">
+								<xpath expression="//@href">
+									<template>${secondCategory}</template>
+								</xpath>
+							</var-def>
+
+							<log>
+								<template>Second Level ${secondCategoryName}</template>
+							</log>
+
+							<!-- Getting the results webpage with an HTTP post -->
+							<var-def name="secondCategorywebpage">
+								<html-to-xml>
+									<http url="${rootUrl}${secondCategoryUrl}" charset="${charset}" />
+								</html-to-xml>
+							</var-def>
+
+							<!-- Third level categories -->
+
+							<loop item="thirdCategory">
+								<list>
+									<xpath
+										expression="//*[@id='wrapper']//div[preceding-sibling::*[@id='industry']][1]/div[@class='clearfix clistc']//li/a">
+										<template>${secondCategorywebpage}</template>
+									</xpath>
+								</list>
+								<body>
+
+									<var-def name="thirdCategoryName">
+										<xpath expression="//normalize-space(text()[1])">
+											<template>${thirdCategory}</template>
+										</xpath>
+									</var-def>
+
+									<var-def name="thirdCategoryUrl">
+										<xpath expression="//@href">
+											<template>${thirdCategory}</template>
+										</xpath>
+									</var-def>
+
+									<log>
+										<template>Third Level ${thirdCategoryName}</template>
+									</log>
+
+									<!-- Default pageCount value -->
+									<var-def name="pageCount">1</var-def>
+
+									<while condition="${i.toInt() &lt;= pageCount.toInt()}"
+										index="i">
+
+										<log>
+											<template>Fetching ${rootUrl}${thirdCategoryUrl}?keyword=&amp;page=${i}</template>
+										</log>
+
+										<!-- Getting the results webpage with an HTTP post -->
+										<var-def name="webpage">
+											<html-to-xml>
+												<http url="${rootUrl}${thirdCategoryUrl}?keyword=&amp;page=${i}"
+													charset="${charset}" method="get" />
+											</html-to-xml>
+										</var-def>
+
+										<!-- For each retailer -->
+										<loop item="retailer" index="j">
+											<list>
+												<xpath expression="//div[@class='results']/div">
+													<template>${webpage}</template>
+												</xpath>
+											</list>
+											<body>
+
+												<var-def name="retailerUrl">
+													<xpath expression="//div[@class='srdesc']/a/@href">
+														<template>${retailer}</template>
+													</xpath>
+												</var-def>
+
+												<!-- Getting the retailer's webpage -->
+												<var-def name="retailerWebpage">
+													<html-to-xml>
+														<http url="${rootUrl}${retailerUrl}" charset="${charset}" />
+													</html-to-xml>
+												</var-def>
+
+												<var-def name="name">
+													<xpath
+														expression="//*[@id='wrapper']//div[@class='titleFill']//normalize-space(text())">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+
+												<var-def name="adress">
+													<xpath
+														expression="//*[@id='infoTab']//div[@class='left']//span[@class='street-address']/normalize-space(text())">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+
+												<var-def name="city">
+													<xpath
+														expression="//*[@id='infoTab']//div[@class='left']//span[@class='locality']/normalize-space(text())">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+
+												<var-def name="state">
+													<xpath
+														expression="//*[@id='infoTab']//div[@class='left']//span[@class='region']/normalize-space(text())">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+
+												<var-def name="zip">
+													<xpath
+														expression="//*[@id='infoTab']//div[@class='left']//span[@class='postal-code']/normalize-space(text())">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+
+												<var-def name="url">
+													<xpath
+														expression="//*[@id='infoTab']//div[@class='left']//div[@class='addrb']/p/a/@href">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+
+												<var-def name="phone">
+													<xpath
+														expression="//*[@id='infoTab']//div[@class='left']//div[@class='addrb']/p[last()-1]/normalize-space(text())">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+
+												<var-def name="fax">
+													<xpath
+														expression="//*[@id='infoTab']//div[@class='left']//div[@class='addrb']/p[last()]/normalize-space(text())">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+
+												<var-def name="founded">
+													<xpath
+														expression="//*[@id='infoTab']//div[@class='csnapc']//div[text()='Founded']/following-sibling::div/normalize-space(text()[1])">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+
+												<var-def name="incorporated">
+													<xpath
+														expression="//*[@id='infoTab']//div[@class='csnapc']//div[text()='Incorporated']/following-sibling::div/normalize-space(text()[1])">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+
+												<var-def name="revenue">
+													<xpath
+														expression="//*[@id='infoTab']//div[@class='csnapc']//div[text()='Annual Revenue']/following-sibling::div/normalize-space(text()[1])">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+
+												<var-def name="employee">
+													<xpath
+														expression="//*[@id='infoTab']//div[@class='csnapc']//div[text()='Employee Count']/following-sibling::div/normalize-space(text()[1])">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+
+												<var-def name="industries">
+													<xpath
+														expression="//*[@id='infoTab']//div[@class='csnapc']//div[text()='Industries']/following-sibling::div/p/text()">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+
+												<var-def name="rawCoordinates">
+													<xpath
+														expression="//*[@id='infoTab']//div[@class='gmap']/script/text()">
+														<template>${retailerWebpage}</template>
+													</xpath>
+												</var-def>
+												
+												<!-- The lots webpage is written, overriding last file -->
+                                                <!--file action="write" path="${outputPath}/${CategoryName}/${firstCategoryName}/results.html">
+                                                    <var name="retailerWebpage" />
+                                                </file-->
+
+												<var-def name="longitude">
+													<regexp>
+														<regexp-pattern>var lat\s+=\s+&quot;(.*)&quot;;\s+var long</regexp-pattern>
+														<regexp-source>
+															<template>${rawCoordinates}</template>
+														</regexp-source>
+														<regexp-result>
+															<template>${_1}</template>
+														</regexp-result>
+													</regexp>
+												</var-def>
+
+												<var-def name="latitude">
+													<regexp>
+														<regexp-pattern>var long\s+=\s+&quot;(.*)&quot;;\s+var business_id</regexp-pattern>
+														<regexp-source>
+															<template>${rawCoordinates}</template>
+														</regexp-source>
+														<regexp-result>
+															<template>${_1}</template>
+														</regexp-result>
+													</regexp>
+												</var-def>
+
+												<var-def name="result">
+													<template>
+														${firstCategoryName};${secondCategoryName};${thirdCategoryName};${name};${adress};${city};${zip};${url};${phone};${fax};${founded};${incorporated};${revenue};${employee};${industries};${longitude};${latitude};
+													</template>
+												</var-def>
+
+												<!-- Writing results -->
+												<file action="append" type="binary"
+													path="${outputPath}/${CategoryName}/${firstCategoryName}/results.csv"
+													charset="${charset}">
+													<template>${result}</template>
+													<template>${sys.lf}</template>
+												</file>
+
+
+											</body>
+										</loop>
+
+										<!-- Updating pageCount -->
+										<var-def name="pageCount">
+											<xpath expression="//*[@id='hsrpage']/li[last()-1]//text()">
+												<template>${webpage}</template>
+											</xpath>
+										</var-def>
+									</while>
+								</body>
+							</loop>
+						</body>
+					</loop>
+				</body>
+			</loop>
+		</body>
+	</loop>
+
+
+</config>
