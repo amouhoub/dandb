@@ -15,6 +15,7 @@ public class Sample {
 
 		// register external plugins if there are any
 		DefinitionResolver.registerPlugin("me.aminos.plugins.LogPlugin");
+		DefinitionResolver.registerPlugin("me.aminos.plugins.FreeMemoryPlugin");
 
 		ScraperConfiguration config = new ScraperConfiguration(
 				file.getAbsolutePath());
@@ -25,7 +26,7 @@ public class Sample {
 		scraper.addVariableToContext("last1st", "1");
 		scraper.addVariableToContext("last2nd", "3");
 		scraper.addVariableToContext("last3rd", "1");
-		scraper.addVariableToContext("lastPage", "163");
+		scraper.addVariableToContext("lastPage", "890");
 
 		scraper.setDebug(true);
 

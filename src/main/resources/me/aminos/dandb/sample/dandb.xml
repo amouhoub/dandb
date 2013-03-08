@@ -134,6 +134,8 @@
 
 									<!-- Default pageCount value -->
 									<var-def name="pageCount">1</var-def>
+									
+									<var-def name="memoryCounter">0</var-def>
 
 									<while condition="${pageCount.toString().length() &gt; 0 &amp;&amp; i.toInt() &lt;= pageCount.toInt()}"
 										index="i">
@@ -323,6 +325,20 @@
 												<template>${webpage}</template>
 											</xpath>
 										</var-def>
+										
+										<var-def name="memoryCounter">
+											<template>${memoryCounter.toInt()+1}</template>
+										</var-def>
+										
+										<!-- Garbage Collecting-->
+										<case>
+											<if condition="${memoryCounter.toInt()&gt;=100}">
+											
+												<free-memory/>
+												
+												<var-def name="memoryCounter">0</var-def>
+											</if>
+										</case>
 										
 										
 									</while>
