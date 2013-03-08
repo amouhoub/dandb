@@ -133,15 +133,15 @@
 									</log>
 
 									<!-- Default pageCount value -->
-									<var-def name="pageCount">1</var-def>
+									<!--var-def name="pageCount">1</var-def-->
 									
 									<var-def name="memoryCounter">0</var-def>
 
-									<while condition="${pageCount.toString().length() &gt; 0 &amp;&amp; i.toInt() &lt;= pageCount.toInt()}"
+									<while condition="${lastPage.toInt()+i.toInt() &lt;= pageCount.toInt()}"
 										index="i">
 
 										<log>
-											<template>Fetching ${rootUrl}${thirdCategoryUrl}?keyword=&amp;page=${(lastPage.toInt()+i.toInt())}</template>
+											<template>Fetching ${rootUrl}${thirdCategoryUrl}?keyword=&amp;page=${(lastPage.toInt()+i.toInt())} / ${pageCount}</template>
 										</log>
 
 										<!-- Getting the results webpage with an HTTP post -->
@@ -332,7 +332,7 @@
 										
 										<!-- Garbage Collecting-->
 										<case>
-											<if condition="${memoryCounter.toInt()&gt;=100}">
+											<if condition="${memoryCounter.toInt()&gt;=50}">
 											
 												<free-memory/>
 												

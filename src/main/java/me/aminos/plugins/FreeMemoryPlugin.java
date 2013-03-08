@@ -8,8 +8,6 @@ import org.webharvest.runtime.variables.Variable;
 
 public class FreeMemoryPlugin extends WebHarvestPlugin {
 
-	// private static final Log LOG = LogFactory.getLog(FreeMemoryPlugin.class);
-
 	private static final String NAME = "free-memory";
 
 	private static final String[] VALID_ATTRIBUTES = new String[] {};
@@ -33,17 +31,15 @@ public class FreeMemoryPlugin extends WebHarvestPlugin {
 	@Override
 	public Variable executePlugin(Scraper scraper, ScraperContext context) {
 
-		// final String _message = this.executeBody(scraper,
-		// context).toString();
-		//
-		// LOG.info(" >> " + _message);
 		System.out.println("Garbage Collector");
 		int totalMemory = (int) (Runtime.getRuntime().totalMemory() / (1024 * 1024));
-		System.out.println(Runtime.getRuntime().freeMemory() / (1024 * 1024)
-				+ "/" + totalMemory);
+		System.out.println(totalMemory - Runtime.getRuntime().freeMemory()
+				/ (1024 * 1024) + "/" + totalMemory);
 		System.gc();
-		System.out.println(Runtime.getRuntime().freeMemory() / (1024 * 1024)
-				+ "/" + totalMemory);
+		System.gc();
+		System.gc();
+		System.out.println(totalMemory - Runtime.getRuntime().freeMemory()
+				/ (1024 * 1024) + "/" + totalMemory);
 
 		//
 		return new EmptyVariable();

@@ -19,28 +19,22 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<configuration>
-					<downloadSources>true</downloadSources>
-					<downloadJavadocs>true</downloadJavadocs>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.1.1</version>
+				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>deploy</phase>
 						<goals>
-							<goal>java</goal>
+							<goal>attached</goal>
 						</goals>
+						<phase>package</phase>
 						<configuration>
-							<mainClass>me.aminos.dandb.sample</mainClass>
-							<arguments>
-								<argument>arg0</argument>
-								<argument>arg1</argument>
-							</arguments>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<archive>
+								<manifest>
+									<mainClass>me.aminos.dandb.sample.Sample</mainClass>
+								</manifest>
+							</archive>
 						</configuration>
 					</execution>
 				</executions>
