@@ -25,7 +25,7 @@ public class Sample {
 		scraper.addVariableToContext("last1st", "1");
 		scraper.addVariableToContext("last2nd", "3");
 		scraper.addVariableToContext("last3rd", "1");
-		scraper.addVariableToContext("lastPage", "1");
+		scraper.addVariableToContext("lastPage", "163");
 
 		scraper.setDebug(true);
 

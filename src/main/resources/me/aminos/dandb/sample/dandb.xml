@@ -323,14 +323,33 @@
 												<template>${webpage}</template>
 											</xpath>
 										</var-def>
+										
+										
 									</while>
+									
+									<var-def name="lastPage">0</var-def>
+									<var-def name="last3rd">1</var-def>
+									
 								</body>
+								
+							<!-- End Third Level-->	
 							</loop>
+							
+							<var-def name="last2nd">1</var-def>
 						</body>
+						
+						<!-- End Second Level-->	
 					</loop>
+					
+					<var-def name="last1st">1</var-def>
 				</body>
+				
+				<!-- End First Level-->
+				
 			</loop>
 		</body>
+		
+	<!-- End Top Level-->
 	</loop>
 
 
